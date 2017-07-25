@@ -1,0 +1,30 @@
+---
+
+- name: Download zip
+  get_url:
+    url: "http://seq.cs.iastate.edu/CAP3/cap3.linux.x86_64.tar"
+    dest: "/tmp/cap3.tar"
+
+- name: Unzip the package
+  unarchive:
+    src: "/tmp/cap3.tar"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Move executable files to path
+  copy:
+    remote_src: yes
+    src: "/tmp/cap3/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+  with_items:
+    - "cap3"
+    - "formcon"
+
+- name: Remove temporary files
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - "/tmp/cap3.tar"
+    - "/tmp/cap3"
